@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+<style>
+html, body, #map-canvas {
+height: 80%;
+margin: 0px;
+padding: 0px
+}
+.controls {
+margin-top: 16px;
+border: 1px solid transparent;
+border-radius: 2px 0 0 2px;
+box-sizing: border-box;
+-moz-box-sizing: border-box;
+height: 32px;
+outline: none;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#pac-input {
+background-color: #fff;
+padding: 0 11px 0 13px;
+width: 400px;
+font-family: Roboto;
+font-size: 15px;
+font-weight: 300;
+text-overflow: ellipsis;
+}
+
+#pac-input:focus {
+border-color: #4d90fe;
+margin-left: -1px;
+padding-left: 14px; /* Regular padding-left + 1. */
+width: 401px;
+}
+
+.pac-container {
+font-family: Roboto;
+}
+
+#type-selector {
+color: #fff;
+background-color: #4d90fe;
+padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+font-family: Roboto;
+font-size: 13px;
+font-weight: 300;
+}
+
+#inputbox {
+
+padding: 10px 900px 100px 750px;
+}
+
+}
+
+</style>
+<title>Places search box</title>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+
+<script src="jquery-1.10.2.js"></script>
+
+<!--
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+-->
+<script>
+// This example adds a search box to a map, using the Google Place Autocomplete
+// feature. People can enter geographical searches. The search box will return a
+// pick list containing a mix of places and predicted search terms.
+var map ;
+
+function initialize() {
+var markers = [];
+var map = new google.maps.Map(document.getElementById('map-canvas'), {
+mapTypeId: google.maps.MapTypeId.ROADMAP
+});
+
+var defaultBounds = new google.maps.LatLngBounds(
+new google.maps.LatLng(-33.8902, 151.1759),
+new google.maps.LatLng(-33.8474, 151.2631));
+map.fitBounds(defaultBounds);
+
+// Create the search box and link it to the UI element.
+var input = /** @type {HTMLInputElement} */(
+document.getElementById('pac-input'));
+map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+var searchBox = new google.maps.places.SearchBox(
+/** @type {HTMLInputElement} */(input));
+
+// [START region_getplaces]
+// Listen for the event fired when the user selects an item from the
+// pick list. Retrieve the matching places for that item.
+google.maps.event.addListener(searchBox, 'places_changed', function() {
+var places = searchBox.getPlaces();
+
+if (places.length == 0) {
+return;
+}
+for (var i = 0, marker; marker = markers[i]; i++) {
+marker.setMap(null);
+}
+
+// For each place, get the icon, place name, and location.
+markers = [];
+var bounds = new google.maps.LatLngBounds();
+for (var i = 0, place; place = places[i]; i++) {
+var image = {
+url: place.icon,
+size: new google.maps.Size(71, 71),
+origin: new google.maps.Point(0, 0),
+anchor: new google.maps.Point(17, 34),
+scaledSize: new google.maps.Size(25, 25)
+};
+
+// Create a marker for each place.
+var marker = new google.maps.Marker({
+map: map,
+icon: image,
+title: place.name,
+position: place.geometry.location
+});
+var lat = place.geometry.location.k;
+var lng = place.geometry.location.B;
+
+document.getElementById('Cords').value=lat + "/" +lng;
+
+var Title = document.getElementById('Title');
+Title.removeAttribute('readonly');
+
+var LeadText = document.getElementById('LeadText');
+LeadText.removeAttribute('readonly');
+
+var Link = document.getElementById('Link');
+Link.removeAttribute('readonly');
+
+markers.push(marker);
+
+bounds.extend(place.geometry.location);
+}
+
+map.fitBounds(bounds);
+});
+// [END region_getplaces]
+
+// Bias the SearchBox results towards places that are within the bounds of the
+// current map's viewport.
+google.maps.event.addListener(map, 'bounds_changed', function() {
+var bounds = map.getBounds();
+searchBox.setBounds(bounds);
+});
+
+google.maps.event.addListener(map, "click", function (e) {
+
+//lat and lng is available in e object
+var lat = e.latLng.k;
+var lng = e.latLng.B;
+
+var marker = new google.maps.Marker({
+map: map,
+position: e.latLng
+});
+
+document.getElementById('Cords').value=lat + "/" +lng;
+
+var Title = document.getElementById('Title');
+Title.removeAttribute('readonly');
+
+var LeadText = document.getElementById('LeadText');
+LeadText.removeAttribute('readonly');
+
+var Link = document.getElementById('Link');
+Link.removeAttribute('readonly');
+
+});
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+<script>
+function primary (){
+var Cords = document.getElementById('Cords');
+var Title = document.getElementById('Title');
+var LeadText = document.getElementById('LeadText');
+var Link = document.getElementById('Link');
+
+var Cordsp = document.getElementById('Cordsp');
+var Titlep = document.getElementById('Titlep');
+var LeadTextp = document.getElementById('LeadTextp');
+var Linkp = document.getElementById('Linkp');
+
+Cordsp.value = Cords.value;
+Titlep.value = Title.value;
+LeadTextp.value = LeadText.value;
+Linkp.value = Link.value;
+
+}
+
+function ClearPrimary(){
+document.getElementById('Cordsp').value = "";;
+document.getElementById('Titlep').value= "";;
+document.getElementById('LeadTextp').value = "";;
+document.getElementById('Linkp').value= "";;
+
+
+}
+
+</script>
+<script>
+/****************Dynamically add new row ***********************/
+//var rowNum = 0;
+//var c=0;
+var id=1;
+var i=0;
+$(document).ready(function () {$('#addrow').click(function addRow(frm) {
+
+var Cords = document.getElementById('Cords');
+var Title = document.getElementById('Title');
+var LeadText = document.getElementById('LeadText');
+var Link = document.getElementById('Link');
+
+Cordss = Cords.value;
+Titles = Title.value;
+LeadTexts = LeadText.value;
+Links = Link.value;
+
+
+
+//titleid=[];
+var seccordid="seccordss"+id;
+var sectitleid ="sectitle"+id;
+var secleadid="secleads"+id;
+var seclinkid="seclinks"+id;
+
+
+//rowNum ++;
+//var row = '';
+//jQuery('#itemRows').append(row);
+$('<p><form action="demo_form.asp"> &nbsp&nbsp&nbsp&nbsp&nbsp GeoCode: <input type="text" id="' +seccordid+ '" value = "' + Cordss +'" readonly> &nbsp&nbsp&nbsp&nbsp&nbsp Title: <input type="text" id="'+ sectitleid +'" value = "' + Titles +'" readonly > &nbsp&nbsp&nbsp&nbsp&nbsp Lead Text: <input type="text" id="'+secleadid+'" value="'+LeadTexts+'" readonly> &nbsp&nbsp&nbsp&nbsp&nbsp Link: <input type="text" id="' +seclinkid+ '" value = "' + Links + '" readonly" >&nbsp&nbsp <a href="#" id="remNew">Remove</a> </p> </form>').appendTo(itemRows);
+
+
+	//call functions
+	ConvertToJson(id);
+	id++;
+	alert(id);
+return false;
+});
+
+//$('#addrow').click(function AddRow() {
+$('#remNew').click (function(){
+//if( rowNum >=1 ) {
+$(this).parent().remove();
+//rowNum--;
+//}
+		});
+	//});
+});
+/*********************______Json Conversion______*******************/
+
+var jsondata=[];
+
+function ConvertToJson(id){
+
+
+//var jsondata = '{ "primary" : { "geocode" : "", "title" : "", "lead text" : "", "link" : "" },"secondary":[{ "geocode" : "", "title" : "","lead text" : "", "link" : "" }]}';
+
+//var jsondata= [{}];
+//var obj = JSON.parse(jsondata);
+//get store dynamic link div ids in following variables
+var corddiv="seccordss"+id;
+var titlediv="sectitle"+id
+var leaddiv="secleads"+id;
+var linkdiv="seclinks"+id;
+
+
+var cords = document.getElementById(corddiv).value;
+var title = document.getElementById(titlediv).value;
+var leadtxt = document.getElementById(leaddiv).value;
+var slinks = document.getElementById(linkdiv).value;
+
+
+/*
+JSONObject jsonobj= new JSONObject();
+
+jsonobj.put("Cords": cords);
+jsonobj.put("Title": title);
+jsonobj.put("LeadText": leadtxt);
+jsonobj.put("Link": slinks);
+*/
+
+//JSONArray jsarray= new JSONArray();
+//jsarray.put(jsonobj.valueToString());
+
+//obj.push(obj);
+	
+//jsondata['secondary'].push({"geocode": cords, "title": title,"lead text": leadtxt, "link": slinks});
+
+//console.log(JSON.stringify(obj));
+	
+
+
+//console.log(JSON.stringify(obj));
+//var Jsondata={"Cords": Cords,"Title": Title , "LeadText":LeadText, "Link":Link };
+
+var jsonobject ={"Cords": cords,"Title": title,"LeadText": leadtxt, "Link": slinks};
+
+jsondata.push(jsonobject);
+console.log(JSON.stringify(jsondata));
+/*
+jsonobject.push({
+
+"Cords": cords,
+"Title": title,
+"LeadText": leadtxt,
+"Link": slinks
+});
+*/
+//var nope = jsondata.toJSONString();
+
+//console.log(JSON.stringify(jsondata));
+
+}
+
+// JsonString = JSON.parse(jsondata);
+//JsonString.put("Cords" :Cords);
+//var jsonstr =JSON.stringify(JsonString);
+//JsonString[0]=$('#seccordss').val();
+//$("#outputtxt).append(jsonstr);
+//alert(JSON.stringify(jsondata));
+
+//c++;
+</script>
+</head>
+<body>
+
+
+<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+<div id="map-canvas"></div><br>
+<form >
+&nbsp&nbsp&nbsp&nbsp&nbsp GeoCode: <input type="text" id="Cords" readonly>
+&nbsp&nbsp&nbsp&nbsp&nbsp Title: <input type="text" id="Title" readonly >
+&nbsp&nbsp&nbsp&nbsp&nbsp Lead Text: <input type="text" id="LeadText" readonly>
+&nbsp&nbsp&nbsp&nbsp&nbsp Link: <input type="text" id="Link" readonly ><br>
+&nbsp&nbsp&nbsp&nbsp&nbsp * Address search results: lat,lng
+<br>
+</form>
+
+
+<div style = "position: relative; left: 64%;">
+<button onclick="primary()">Primary</button>
+&nbsp&nbs
+
+<button id ="addrow" >Secondary </button>
+</div>
+
+<h3>Primary Address</h3>
+<form action="demo_form.asp">
+&nbsp&nbsp&nbsp&nbsp&nbsp GeoCode: <input type="text" id="Cordsp" readonly>
+&nbsp&nbsp&nbsp&nbsp&nbsp Title: <input type="text" id="Titlep" readonly >
+&nbsp&nbsp&nbsp&nbsp&nbsp Lead Text: <input type="text" id="LeadTextp" readonly>
+&nbsp&nbsp&nbsp&nbsp&nbsp Link: <input type="text" id="Linkp" readonly ><br>
+
+</form>
+<br>
+<div style = " position: relative; left: 71%;">
+&nbsp&nbsp <button onclick="ClearPrimary()">Clear</button>
+</div>
+<h3>Secondary Address</h3>
+
+<!-- *******************************-->
+
+<div id="itemRows">
+</div>
+
+</body>
+</html>
