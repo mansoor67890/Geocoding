@@ -212,8 +212,6 @@ document.getElementById('Cordsp').value = "";;
 document.getElementById('Titlep').value= "";;
 document.getElementById('LeadTextp').value = "";;
 document.getElementById('Linkp').value= "";;
-
-
 }
 
 </script>
@@ -252,8 +250,10 @@ $('<p><form action="demo_form.asp"> &nbsp&nbsp&nbsp&nbsp&nbsp GeoCode: <input ty
 
 	//call functions
 	ConvertToJson(id);
-	id++;
+	
 	alert(id);
+	id++;
+	
 return false;
 });
 
@@ -266,75 +266,96 @@ $(this).parent().remove();
 		});
 	//});
 });
+
 /*********************______Json Conversion______*******************/
 
-var secjsondata=[];
-//var prijsondata={};
-
-function ConvertToJson(id){
-
-
-//var jsondata = '{ "primary" : { "geocode" : "", "title" : "", "lead text" : "", "link" : "" },"secondary":[{ "geocode" : "", "title" : "","lead text" : "", "link" : "" }]}';
-
-//var jsondata= [{}];
-//var obj = JSON.parse(jsondata);
-//get and store dynamic secondary div ids in following variables
-var corddiv="seccordss"+id;
-var titlediv="sectitle"+id
-var leaddiv="secleads"+id;
-var linkdiv="seclinks"+id;
-
-//for secondary object
-var cords = document.getElementById(corddiv).value;
-var title = document.getElementById(titlediv).value;
-var leadtxt = document.getElementById(leaddiv).value;
-var slinks = document.getElementById(linkdiv).value;
-
-//secondary obj
-var jsonobject ={"geocode": cords,"title": title,"lead text": leadtxt, "link": slinks};
-secjsondata.push(jsonobject);
-console.log("Secondary data: ");
-console.log(JSON.stringify(secjsondata));
-console.log("\n");
-
-//primary values
+function primaryjson(){
+//var label="primary";
 var pcords = $('#Cords').val();
 var ptitle = $('#Title').val();
 var pleadText = $('#LeadText').val();
 var plink = $('#Link').val();
 
-
-var pjsonobj ={"geocode": pcords,"title": ptitle, "lead text": pleadText, "link": plink};
-//prijsondata.push(pjsonobj);
-//
-console.log("Primary data: ");
-console.log(JSON.stringify(pjsonobj));
-
-
-//console.log(JSON.stringify(obj));
-//var Jsondata={"Cords": Cords,"Title": Title , "LeadText":LeadText, "Link":Link };
-/*
-JSONObject jsonobj= new JSONObject();
-jsonobj.put("Cords": cords);
-jsonobj.put("Title": title);
-jsonobj.put("LeadText": leadtxt);
-jsonobj.put("Link": slinks);
-*/
-//JSONArray jsarray= new JSONArray();
-//jsarray.put(jsonobj.valueToString());
-//obj.push(obj);
-//jsondata['secondary'].push({"geocode": cords, "title": title,"lead text": leadtxt, "link": slinks});
-//console.log(JSON.stringify(obj));
-//var nope = jsondata.toJSONString();
-//console.log(JSON.stringify(jsondata));
+if(id==1)
+{
+var pjsonobj ={"primary":{ "geocode": pcords,"title": ptitle, "lead text": pleadText, "link": plink}};
+//prijsondata.push(pjsonobj); 
 }
+else {
+
+	var pjsonobj ={"geocode": pcords,"title": ptitle, "lead text": pleadText, "link": plink};
+}
+//
+//console.log("Primary data: ");
+//console.log(JSON.stringify(pjsonobj));
+addprimary(pjsonobj);
+}
+
+//seconday array'
+var secjsondata=[ ];
+JSON
+function ConvertToJson(id){
+
+//get and store dynamic secondary div ids in following variables
+		var corddiv="seccordss"+id;
+		var titlediv="sectitle"+id
+		var leaddiv="secleads"+id;
+		var linkdiv="seclinks"+id;
+
+		//for secondary object
+		var cords = document.getElementById(corddiv).value;
+		var title = document.getElementById(titlediv).value;
+		var leadtxt = document.getElementById(leaddiv).value;
+		var slinks = document.getElementById(linkdiv).value;
+
+//secondary obj
+	if(id==1)
+	{
+	
+		var jsonobject ={"secondary" :{"geocode": cords,"title": title,"lead text": leadtxt, "link": slinks}};	
+	}
+	else
+	{
+		var jsonobject ={"geocode": cords,"title": title,"lead text": leadtxt, "link": slinks};	
+	}
+
+	secjsondata.push(jsonobject);
+	//add to array
+	addsecjson(secjsondata);
+	//console.log("Secondary data: ");
+	//console.log(JSON.stringify(secjsondata));
+	//console.log("\n");
+
+}
+
+var fulljsonarray=[];
+function addprimary(obj){
+	
+	//if(label=="primary";) {
+	
+		var jsonobj=JSON.stringify(obj);
+		//fulljsonarray=[];
+		fulljsonarray.push(jsonobj);
+		console.log("full array on addition of primary:\n");
+		console.log	(JSON.stringify(fulljsonarray));
+	//}
+}
+
+//add secondary json...
+var count=0;
+function addsecjson(obj){
+	
+	var jsonobj= JSON.stringify(obj);
+	
+	fulljsonarray.push(obj);
+	console.log("full array on addition of secondary:\n");
+	console.log(JSON.stringify(fulljsonarray));	
+}
+
 // JsonString = JSON.parse(jsondata);
 //JsonString.put("Cords" :Cords);
 //var jsonstr =JSON.stringify(JsonString);
 //JsonString[0]=$('#seccordss').val();
-//$("#outputtxt).append(jsonstr);
-//alert(JSON.stringify(jsondata));
-//c++;
 </script>
 </head>
 <body>
@@ -351,9 +372,8 @@ jsonobj.put("Link": slinks);
 <br>
 </form>
 
-
 <div style = "position: relative; left: 64%;">
-<button onclick="primary()">Primary</button>
+<button onclick="primary(), primaryjson()">Primary</button>
 &nbsp&nbs
 
 <button id ="addrow" >Secondary </button>
