@@ -269,12 +269,7 @@ return false;
 	//end doc.ready
 	});
 	
-function removerow(){
-	var remid = $(this).attr('id')
-	remnewid="remnewid"+this.id;
-	$("#"+remid).remove();
-	//$("#"+remnewid).closest("form"))
-}
+
 
 /*********************______Json Conversion______*******************/
 
@@ -289,20 +284,25 @@ function primaryJson(){
 	if(id==1)
 	{
 	var pjsonobj ={"primary":{ "geocode": pcords,"title": ptitle, "lead text": pleadText, "link": plink}};
+	//var pjsonobj=JSON.parse(nigga);
 	//prijsondata.push(pjsonobj); 
 	}
 	else {
-
 	var pjsonobj ={"geocode": pcords,"title": ptitle, "lead text": pleadText, "link": plink};
 	}
-//
 //console.log("Primary data: ");
 //console.log(JSON.stringify(pjsonobj));
 	addprimary(pjsonobj);
 }
 
 //seconday array'
-var secjsondata=[ ];
+
+
+var fulljsonarray={};
+fulljsonarray.primary=[];
+fulljsonarray.secondary=[];
+
+//var secjsondata=[ ];
 function ConvertToJson(id){
 
 //get and store dynamic secondary div ids in following variables
@@ -318,34 +318,39 @@ function ConvertToJson(id){
 		var slinks = document.getElementById(linkdiv).value;
 
 //secondary obj
+/*	
 	if(id==1)
 	{	
-		jsonobject = JSON.parse('"secondary" : { "geocode": "'+ cords +'","title": "'+ title +'","lead text": "'+ leadtxt +'", "link": "'+ slinks +'" }');
+		var jsonobject = ('"secondary" : { "geocode": "'+ cords +'","title": "'+ title +'","lead text": "'+ leadtxt +'", "link": "'+ slinks +'" }');
 	
 	}
 	else
 	{
 		var jsonobject ={"geocode": cords,"title": title,"lead text": leadtxt, "link": slinks};	
 	}
+*/
 
-	secjsondata.push(jsonobject);
+	var jsonobject ={"geocode": cords,"title": title,"lead text": leadtxt, "link": slinks};		
+
+	//secjsondata.push(jsonobject);
 	//add to array
-	addsecjson(secjsondata);
+	addsecjson(jsonobject);
 	//console.log("Secondary data: ");
 	//console.log(JSON.stringify(secjsondata));
 	//console.log("\n");
 
 }
 
-var fulljsonarray=[];
+
 function addprimary(obj){
 	
 	//if(label=="primary";)
 	
-		var jsonobj=JSON.stringify(obj);
+		//var jsonobj=JSON.stringify(obj);
 		//console.log(jsonobj);
 		//fulljsonarray=[];
-		fulljsonarray.push(jsonobj);
+		fulljsonarray.primary.push(obj);
+
 		console.log("full array on addition of primary:\n");
 		console.log	(JSON.stringify(fulljsonarray));
 	
@@ -356,10 +361,21 @@ var count=0;
 function addsecjson(obj){
 	
 	var jsonobj= JSON.stringify(obj);
-	fulljsonarray.push(obj);
+	fulljsonarray.secondary.push(obj);
 	console.log("full array on addition of secondary:\n");
 	console.log(JSON.stringify(fulljsonarray));	
 }
+
+
+function removejson(obj){
+	var remid = $(obj).attr('id')
+	remnewid="remnewid"+this.id;
+	$("#"+remid).remove();
+	//$("#"+remnewid).closest("form"))
+}
+
+
+
 
 // JsonString = JSON.parse(jsondata);
 //JsonString.put("Cords" :Cords);
