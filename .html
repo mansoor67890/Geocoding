@@ -215,6 +215,7 @@ document.getElementById('Linkp').value= "";;
 }
 
 </script>
+
 <script>
 /****************Dynamically add new row ***********************/
 //var rowNum = 0;
@@ -240,60 +241,68 @@ var seccordid="seccordss"+id;
 var sectitleid ="sectitle"+id;
 var secleadid="secleads"+id;
 var seclinkid="seclinks"+id;
-
+var remnewid="remnewid"+id;
 
 //rowNum ++;
 //var row = '';
 //jQuery('#itemRows').append(row);
-$('<p><form action="demo_form.asp"> &nbsp&nbsp&nbsp&nbsp&nbsp GeoCode: <input type="text" id="' +seccordid+ '" value = "' + Cordss +'" readonly> &nbsp&nbsp&nbsp&nbsp&nbsp Title: <input type="text" id="'+ sectitleid +'" value = "' + Titles +'" readonly > &nbsp&nbsp&nbsp&nbsp&nbsp Lead Text: <input type="text" id="'+secleadid+'" value="'+LeadTexts+'" readonly> &nbsp&nbsp&nbsp&nbsp&nbsp Link: <input type="text" id="' +seclinkid+ '" value = "' + Links + '" readonly" >&nbsp&nbsp <a href="#" id="remNew">Remove</a> </p> </form>').appendTo(itemRows);
-
+$('<p><form id="'+remnewid+'"  > &nbsp&nbsp&nbsp&nbsp&nbsp GeoCode: <input type="text" id="' +seccordid+ '" value = "' + Cordss +'" readonly> &nbsp&nbsp&nbsp&nbsp&nbsp Title: <input type="text" id="'+ sectitleid +'" value = "' + Titles +'" readonly > &nbsp&nbsp&nbsp&nbsp&nbsp Lead Text: <input type="text" id="'+secleadid+'" value="'+LeadTexts+'" readonly> &nbsp&nbsp&nbsp&nbsp&nbsp Link: <input type="text" id="' +seclinkid+ '" value = "' + Links + '" readonly" >&nbsp&nbsp <a href="#" id="remNew" >Remove</button></p> </form>').appendTo(itemRows);
 
 	//call functions
-	ConvertToJson(id);
+	ConvertToJson(id++);
 	
 	alert(id);
-	id++;
+	//id++;
 	
 return false;
 });
-
-//$('#addrow').click(function AddRow() {
-$('#remNew').click (function(){
-//if( rowNum >=1 ) {
-$(this).parent().remove();
-//rowNum--;
 //}
+
+
+	$('#addrow').click(function AddRow() {
+	$('#remNew').click (function(){
+	$(this).parent().remove();
+	removejson(this);
 		});
-	//});
 });
+
+	//end doc.ready
+	});
+	
+function removerow(){
+	var remid = $(this).attr('id')
+	remnewid="remnewid"+this.id;
+	$("#"+remid).remove();
+	//$("#"+remnewid).closest("form"))
+}
 
 /*********************______Json Conversion______*******************/
 
-function primaryjson(){
-//var label="primary";
-var pcords = $('#Cords').val();
-var ptitle = $('#Title').val();
-var pleadText = $('#LeadText').val();
-var plink = $('#Link').val();
+function primaryJson(){
+	
+	//var label="primary";
+	var pcords = $('#Cords').val();
+	var ptitle = $('#Title').val();
+	var pleadText = $('#LeadText').val();
+	var plink = $('#Link').val();
 
-if(id==1)
-{
-var pjsonobj ={"primary":{ "geocode": pcords,"title": ptitle, "lead text": pleadText, "link": plink}};
-//prijsondata.push(pjsonobj); 
-}
-else {
+	if(id==1)
+	{
+	var pjsonobj ={"primary":{ "geocode": pcords,"title": ptitle, "lead text": pleadText, "link": plink}};
+	//prijsondata.push(pjsonobj); 
+	}
+	else {
 
 	var pjsonobj ={"geocode": pcords,"title": ptitle, "lead text": pleadText, "link": plink};
-}
+	}
 //
 //console.log("Primary data: ");
 //console.log(JSON.stringify(pjsonobj));
-addprimary(pjsonobj);
+	addprimary(pjsonobj);
 }
 
 //seconday array'
 var secjsondata=[ ];
-JSON
 function ConvertToJson(id){
 
 //get and store dynamic secondary div ids in following variables
@@ -310,9 +319,9 @@ function ConvertToJson(id){
 
 //secondary obj
 	if(id==1)
-	{
+	{	
+		jsonobject = JSON.parse('"secondary" : { "geocode": "'+ cords +'","title": "'+ title +'","lead text": "'+ leadtxt +'", "link": "'+ slinks +'" }');
 	
-		var jsonobject ={"secondary" :{"geocode": cords,"title": title,"lead text": leadtxt, "link": slinks}};	
 	}
 	else
 	{
@@ -331,14 +340,15 @@ function ConvertToJson(id){
 var fulljsonarray=[];
 function addprimary(obj){
 	
-	//if(label=="primary";) {
+	//if(label=="primary";)
 	
 		var jsonobj=JSON.stringify(obj);
+		//console.log(jsonobj);
 		//fulljsonarray=[];
 		fulljsonarray.push(jsonobj);
 		console.log("full array on addition of primary:\n");
 		console.log	(JSON.stringify(fulljsonarray));
-	//}
+	
 }
 
 //add secondary json...
@@ -346,7 +356,6 @@ var count=0;
 function addsecjson(obj){
 	
 	var jsonobj= JSON.stringify(obj);
-	
 	fulljsonarray.push(obj);
 	console.log("full array on addition of secondary:\n");
 	console.log(JSON.stringify(fulljsonarray));	
@@ -373,7 +382,7 @@ function addsecjson(obj){
 </form>
 
 <div style = "position: relative; left: 64%;">
-<button onclick="primary(), primaryjson()">Primary</button>
+<button onclick="primary(), primaryJson()">Primary</button>
 &nbsp&nbs
 
 <button id ="addrow" >Secondary </button>
